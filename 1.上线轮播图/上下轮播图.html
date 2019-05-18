@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<style type="text/css">
+			*{margin: 0;padding: 0;}
+			ul,ol li{list-style: none;}
+			div{
+				border: 1px solid;
+				width: 600px;
+				height: 400px;
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				right: 0;
+				margin:auto;
+				overflow: hidden;
+			}
+			div ul{
+				width: 600px;
+				height: 400px;
+				position: absolute;
+				top:-400px;
+			}
+			div ul li{
+				width: 600px;
+				height: 400px;
+			}
+			div ul li a{
+				width: 600px;
+				height: 400px;
+				text-decoration: none;
+			}
+			div ul li a img{
+				width: 600px;
+				height: 400px;
+			}
+			div #zuo{
+				position: absolute;
+				left: 0px;
+				top: 180px;
+				width: 60px;
+				height: 40px;
+				background:url(img/zuo.jpg) no-repeat;
+				background-size:60px 40px;
+				text-decoration: none;	
+				opacity: 0.5;
+				
+			}
+			div #you{
+				position: absolute;
+				right: 0px;
+				top: 180px;
+				width: 60px;
+				height: 40px;
+				background:url(img/you.jpg) no-repeat;
+				background-size:60px 40px;
+				opacity: 0.5;
+				text-decoration: none;
+			}
+			div ol{
+				position: absolute;
+				height: 21px;
+				width: 200px;
+				border-radius: 30px;
+				background-color: #757575;
+				left: 200px;
+				top:380px;
+				display: flex;
+				justify-content: space-around;
+				align-items: center;
+				opacity: 0.6;
+				cursor: pointer;
+			}
+			div ol li{
+				height: 15px;
+				width: 15px;
+				border-radius: 40px;
+				background-color: #fff;
+				opacity: 0.9;
+				text-align: center;
+				line-height: 15px;
+				font-size: 12px;
+			}
+			div ol li.ac{
+				background-color: red;
+			}
+		</style>
+	</head>
+	<body>
+		<div>
+			<ul>
+				<li><a href=""><img src="img/6.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/1.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/2.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/3.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/4.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/5.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/6.jpg" alt=""></a></li>
+				<li><a href=""><img src="img/1.jpg" alt=""></a></li>
+			</ul>
+			<ol>
+				
+			</ol>
+			<a id="zuo"></a>
+			<a id="you"></a>
+		</div>
+		<script type="text/javascript">
+			class seamless{
+				constructor(iselement){
+					this.n=0;//记录开始坐标
+					this.m=0;//延迟坐标
+					this.iselement=document.querySelector(iselement);
+					this.ollis=[];//存放ollis的空数组
+					this.seek();
+					this.establish();
+					this.autoPaly();
+					console.log(this.ollis.length)
+					this.chu();
+					this.ru();
+				}
+				//找寻元素
+				seek(){
+					this.ul=this.iselement.querySelector("ul");
+					this.ol=this.iselement.querySelector("ol");
+					this.zuo=this.iselement.querySelector("#zuo");
+					this.you=this.iselement.querySelector("#you");
+					this.uls=this.ul.querySelectorAll("li");
+				}
+				//循环创建ol的li 
+				establish(){
+					for(let i=0;i<=this.uls.length-3;i++){
+						var li=document.createElement("li");
+						li.innerText=i+1;
+						if(i==0)li.classList.add("ac");
+						this.ol.appendChild(li);
+						this.ollis.push(li);
+						
+					}
+					this.olliclick();
+					this.zuoMove();
+					this.youMove();
+				}
+				
+				//给ol的li绑定事件
+				olliclick(){
+					for(let i=0;i<this.ollis.length;i++){
+						this.ollis[i].onclick=()=>{
+							this.n=i;
+							this.change();
+							this.m=this.n;
+						}
+					}
+				}
+				function(){
+					return
+				}
+				//zuo移动
+				zuoMove(){
+					this.zuo.onclick=()=>{
+						this.n--;
+						if(this.n<0){
+							this.n=this.uls.length-3;
+							this.ul.style.top=-(this.ollis.length+1)*400+"px";
+						}
+						this.change();
+						this.m=this.n;
+					}
+				}
+				//you移动
+				youMove(){
+					this.you.onclick=()=>{
+						this.n++;
+						if(this.n==this.uls.length-2){
+							this.n=0;
+							this.ul.style.top=0;
+						}
+						this.change();
+						this.m=this.n;
+					}
+				}
+				change(){
+					this.ollis[this.m].classList.remove("ac");
+					this.ollis[this.n].classList.add("ac");
+					//console.log(this.n)
+					this.move(this.ul,'top',-(this.n+1)*400)
+				}
+				move(obj,attr,end){
+					clearInterval(obj.timer);
+					
+					let start = parseInt(this.getStyle(obj, attr));
+					
+					obj.timer = setInterval(function () {
+						let distance = end - start;
+						
+						let speed = distance > 0 ? Math.ceil(distance / 10) : Math.floor(distance / 10);
+						start += speed;
+						obj.style[attr] = start + "px";
+						if(start === end) {
+							clearInterval(obj.timer);
+						}
+					}, 50);
+				}
+				
+				getStyle(obj, attr) {
+					return obj.currentStyle ? obj.currentStyle[attr] : getComputedStyle(obj, false)[attr];
+				}
+				
+				autoPaly(){
+				this.timer=setInterval(function(){
+						this.you.onclick();
+						}.bind(this),2500)
+						
+				}
+				ru(){
+					this.iselement.onmouseenter=()=>{
+					clearInterval(this.timer);
+					}
+				}
+				chu(){
+					this.iselement.onmouseleave=()=>{
+					this.autoPaly();
+					}
+				}
+			}
+			new seamless("div");
+		</script>
+	</body>
+</html>
+
